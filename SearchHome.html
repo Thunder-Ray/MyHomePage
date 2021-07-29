@@ -136,7 +136,7 @@
             }
         }
 		function iserrorcode(inputtxt) {
-			var pattern = /^0x[0-9a-d]+$|^[0-9a-d]+$/i //0x+hex or hex
+			var pattern = /^0[x][0-9a-f]+$|^[0-9a-f]+$/i //0x+hex or hex
             return inputtxt.match(pattern);
 		}
         function RadioSearchSites_OnChange(foo) {
