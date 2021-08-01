@@ -41,7 +41,7 @@
                 &nbsp;&nbsp;<a href="https://microsoft.visualstudio.com/os/_queries/query/06d10c74-f0d8-49e7-8e44-7ffcd181b5c3/">EDR Proposed Scenarios</a>
             <h5>VSO Sites</h2>
                 &nbsp;&nbsp;<a href="https://microsoft.visualstudio.com/etas/_git/QES.CustomerReport">ETAS QES Customer Report</a>
-                &nbsp;&nbsp;<a href="https://microsoft.visualstudio.com/etas/_git/PartnerAnalyticsDataPipeline">ETAS QES Customer Report</a>
+                &nbsp;&nbsp;<a href="https://microsoft.visualstudio.com/etas/_git/PartnerAnalyticsDataPipeline">Partner Analytics Data Pipeline</a>
             <h5>Scope Sites</h5>
                 &nbsp;&nbsp; <a href="https://mscosmos.visualstudio.com/CosmosWiki/_wiki/wikis/Cosmos.wiki/66/SCOPE-Tutorial">Cosmos Wiki</a> 
                 &nbsp;&nbsp; <a href="https://scriptlibrary.azurewebsites.net/">Script Library</a> 
@@ -82,13 +82,12 @@
                         dst = "https://servicedesk.microsoft.com/#/customer/cases?caseNumber=" + inputString;
                         navigate_to(dst);
                     }
-					else if (iserrorcode(inputString))
-					{
-						dst = "http://errors/?" + inputString;
-						navigate_to(dst);
-					}
                 }
-
+                else if (iserrorcode(inputString))
+				{
+					dst = "http://errors/?" + inputString;
+					navigate_to(dst);
+				}
             }
             else { //Search
                 var osgwikidst = "https://osgwiki.com/index.php?search=";
