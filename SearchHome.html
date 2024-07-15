@@ -70,11 +70,11 @@
             if (radioSites[1].checked || allnumeric(inputString)||iserrorcode(inputString)) { //Get Content By ID
 
                 if (allnumeric(inputString)) {
-                    if (inputString.length == 6 || inputString.length == 5) { //Partner Universal ID
+                    if (inputString.length == 6 || inputString.length == 7) { //Partner Universal ID
                         dst = "https://microsoft.visualstudio.com/OS/_search?type=workitem&text=partneruniversalid:" + inputString;
                         navigate_to(dst);
                     }
-                    else if (inputString.length == 7 || inputString.length == 8) { //VSO Bug ID
+                    else if (inputString.length == 8) { //VSO Bug ID
 
                         dst = "https://microsoft.visualstudio.com/OS/_workitems/edit/" + inputString;
                         navigate_to(dst);
