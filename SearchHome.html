@@ -7,44 +7,38 @@
 </head>
 <body>
 
-    <form id="SearchForm" onsubmit="search_submit();return false">
-        <input id="queryString" autofocus name="queryString" type="text" maxlength="255" value="" incremental="true" size="80" style="width:60%">
+    <section aria-labelledby="intranet-search-heading">
+        <h2 id="intranet-search-heading">Intranet search</h2>
+        <p>Recognized IDs and error codes open directly. Other queries search the selected sites.</p>
+        <form id="SearchForm" onsubmit="search_submit();return false">
+            <input id="queryString" autofocus name="queryString" type="text" maxlength="255" value="" incremental="true" size="80" style="width:60%" placeholder="Search OSGWiki and MSW">
 
-        <button class="aui-button" id="search-query-submit-button" type="button" onclick="search_submit();return false;"><span class="aui-icon aui-icon-small aui-iconfont-search">Search</span></button>
-        <div id="errmessage" style="color:red">
-        </div>
-
-
-        <div style="clear:both">
-            <br>
-            <input id="RadioSearchSites1" type="radio" name="RadioSearchSites" checked onchange="RadioSearchSites_OnChange(this)" accesskey="s"><label for="RadioSearchSites"><u>S</u>earch Intranet</label>
-
-            <br>&nbsp;&nbsp;
-            <input id="HostSiteOSG" name="HostSite" type="checkbox" value="OSGWiki" checked="checked" ><label for="HostSiteOSG">Search OSGWiki</label>
-            <br>&nbsp;&nbsp;
-            <input id="HostSiteMSW" name="HostSite" type="checkbox" value="MSW" checked="checked" ><label for="HostSiteMSW">Search MSW</label>
-        </div>
-        <br />
-        <div>
-            <input id="RadioSearchSites2" type="radio" name="RadioSearchSites" onchange="RadioSearchSites_OnChange(this)" accesskey="g"><label for="RadioSearchID"><u>G</u>et content by ID</label>
-        </div>
-    </form>
-
-    <form id="SearchForm" onsubmit="search_submit();return false">
-        <input id="queryString" autofocus name="queryString" type="text" maxlength="255" value="" incremental="true" size="80" style="width:60%">
-
-        <button class="aui-button" id="search-query-submit-button" type="button" onclick="search_submit();return false;"><span class="aui-icon aui-icon-small aui-iconfont-search">Search</span></button>
-        <div id="errmessage" style="color:red">
-        </div>
+            <button class="aui-button" id="search-query-submit-button" type="submit"><span class="aui-icon aui-icon-small aui-iconfont-search">Search</span></button>
+            <div id="errmessage" style="color:red">
+            </div>
 
 
-        <div style="clear:both">
-            <br>
-			            <br>&nbsp;&nbsp;
-            <input id="HostSiteVSOOS" name="HostSite" type="checkbox" value="VSOOS"><label for="HostSiteVSOOS">Search VSO OS Workitem</label>
-        </div>
-        <br />
-    </form>
+            <div style="clear:both">
+                <br>
+                &nbsp;&nbsp;
+                <input id="HostSiteOSG" name="HostSite" type="checkbox" value="OSGWiki" checked="checked" ><label for="HostSiteOSG">Search OSGWiki</label>
+                <br>&nbsp;&nbsp;
+                <input id="HostSiteMSW" name="HostSite" type="checkbox" value="MSW" checked="checked" ><label for="HostSiteMSW">Search MSW</label>
+            </div>
+        </form>
+    </section>
+
+    <section aria-labelledby="workitem-search-heading">
+        <h2 id="workitem-search-heading">Azure DevOps work items</h2>
+        <p>Recognized IDs and error codes open directly. Other queries search work items in the OS project.</p>
+        <form id="WorkItemSearchForm" onsubmit="workitem_search_submit();return false">
+            <input id="workItemQueryString" name="workItemQueryString" type="text" maxlength="255" value="" incremental="true" size="80" style="width:60%" placeholder="Search OS work items">
+
+            <button class="aui-button" id="workitem-search-query-submit-button" type="submit"><span class="aui-icon aui-icon-small aui-iconfont-search">Search</span></button>
+            <div id="workItemErrmessage" style="color:red">
+            </div>
+        </form>
+    </section>
     <div style="clear:both">
         <h3>Common Internal Links</h3>
             &nbsp;&nbsp; <a href="http://errors/">http://errors/</a>
@@ -69,28 +63,60 @@
             &nbsp;&nbsp;  <a href="https://partner.microsoft.com/en-us/dashboard/home">Partner Dev Center Dashboard</a>
         <h3>Other Links</h3>   
             &nbsp;&nbsp; <a href="https://msvacation.microsoft.com/">MS Vacation</a>
-            &nbsp;&nbsp; <a href="https://msexpense2/">MS Expense</a>
+            &nbsp;&nbsp; <a href="https://expense.microsoft.com/">MS Expense</a>
             &nbsp;&nbsp; <a href="https://aka.ms/adp-myview/">Pay Slip</a>
     </div>
 
 
     <script type="text/javascript">
+        function workitem_search_submit() {
+            var inputString = document.getElementById("workItemQueryString").value.trim();
+            var errorElement = document.getElementById("workItemErrmessage");
+            errorElement.innerHTML = "";
+
+            if (!inputString) {
+                errorElement.innerHTML = "Enter a search term or ID.";
+                document.getElementById("workItemQueryString").focus();
+                return;
+            }
+
+            var dst;
+            if (allnumeric(inputString)) {
+                if (inputString.length == 6 || inputString.length == 7) {
+                    dst = "https://dev.azure.com/microsoft/OS/_search?type=workitem&pageSize=25&filters=Projects%7BOS%7D&text=" + encodeURIComponent("partneruniversalid:" + inputString);
+                }
+                else if (inputString.length == 8) {
+                    dst = "https://dev.azure.com/microsoft/OS/_workitems/edit/" + inputString;
+                }
+                else if (inputString.length >= 14) {
+                    dst = "https://servicedesk.microsoft.com/#/customer/cases?caseNumber=" + inputString;
+                }
+            }
+            else if (iserrorcode(inputString)) {
+                dst = "http://errors/?" + encodeURIComponent(inputString);
+            }
+
+            if (!dst) {
+                dst = "https://dev.azure.com/microsoft/OS/_search?type=workitem&pageSize=25&filters=Projects%7BOS%7D&text=" + encodeURIComponent(inputString);
+            }
+            navigate_to(dst);
+        }
+
         function search_submit() {
             errmessage.innerHTML = "";
             var firstnavigate = true;
-            var radioSites = document.getElementsByName("RadioSearchSites");
             var inputString = document.getElementById("queryString").value;
             inputString = inputString.trim();
-            if (radioSites[1].checked || allnumeric(inputString)||iserrorcode(inputString)) { //Get Content By ID
+            if (allnumeric(inputString)||iserrorcode(inputString)) { //Get Content By ID
 
                 if (allnumeric(inputString)) {
                     if (inputString.length == 6 || inputString.length == 7) { //Partner Universal ID
-                        dst = "https://microsoft.visualstudio.com/OS/_search?type=workitem&text=partneruniversalid:" + inputString;
+                        dst = "https://dev.azure.com/OS/_search?type=workitem&text=partneruniversalid:" + inputString;
                         navigate_to(dst);
                     }
                     else if (inputString.length == 8) { //VSO Bug ID
 
-                        dst = "https://microsoft.visualstudio.com/OS/_workitems/edit/" + inputString;
+                        dst = "https://dev.azure.com/OS/_workitems/edit/" + inputString;
                         navigate_to(dst);
                     }
 					else if (inputString.length >= 14 ) { //CSS Case, use Service Desk Link
@@ -115,29 +141,22 @@
                 escapequerystring = encodeURIComponent(querystring);
                 var dst;
 
-                if (radioSites[0].checked) {
-                    dst = escapequerystring;
-                    checkboxSite = document.getElementsByName("HostSite");
+                dst = escapequerystring;
+                checkboxSite = document.getElementsByName("HostSite");
 
-                    dst += encodeURIComponent(querystring);
+                dst += encodeURIComponent(querystring);
 
-                    if (checkboxSite[0].checked) {
-                        dst = osgwikidst + escapequerystring;
-                        navigate_to(dst, firstnavigate);
-                        firstnavigate = false;
-                    }
-                    if (checkboxSite[1].checked) {
-                        dst = mswdst + escapequerystring;
+                if (checkboxSite[0].checked) {
+                    dst = osgwikidst + escapequerystring;
+                    navigate_to(dst, firstnavigate);
+                    firstnavigate = false;
+                }
+                if (checkboxSite[1].checked) {
+                    dst = mswdst + escapequerystring;
 
-                        navigate_to(dst, firstnavigate);
-                        firstnavigate = false;
-                    }
-					if (checkboxSite[2].checked){
-					    dst = vsoosdst + escapequerystring;
-                        navigate_to(dst, firstnavigate);
-                        firstnavigate = false;
-					}
-				}
+                    navigate_to(dst, firstnavigate);
+                    firstnavigate = false;
+                }
             }
             document.getElementById("queryString").focus;
         }
@@ -154,14 +173,6 @@
 			var pattern = /^0[x][0-9a-f]+$|^[0-9a-f]+$/i //0x+hex or hex
             return inputtxt.match(pattern);
 		}
-        function RadioSearchSites_OnChange(foo) {
-            radioSites = document.getElementsByName("RadioSearchSites");
-            checkboxSite = document.getElementsByName("HostSite");
-            for (i = 0; i < checkboxSite.length; i++) {
-                checkboxSite[i].disabled = !radioSites[0].checked;
-            }
-        }
-
         function navigate_to(dst_url, firstnavigator = true) {
             if (!firstnavigator) {
                 window.location.href = dst_url;
