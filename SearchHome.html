@@ -111,12 +111,12 @@
 
                 if (allnumeric(inputString)) {
                     if (inputString.length == 6 || inputString.length == 7) { //Partner Universal ID
-                        dst = "https://dev.azure.com/OS/_search?type=workitem&text=partneruniversalid:" + inputString;
+                        dst = "https://dev.azure.com/microsoft/OS/_search?type=workitem&text=partneruniversalid:" + inputString;
                         navigate_to(dst);
                     }
                     else if (inputString.length == 8) { //VSO Bug ID
 
-                        dst = "https://dev.azure.com/OS/_workitems/edit/" + inputString;
+                        dst = "https://dev.azure.com/microsoft/OS/_workitems/edit/" + inputString;
                         navigate_to(dst);
                     }
 					else if (inputString.length >= 14 ) { //CSS Case, use Service Desk Link
